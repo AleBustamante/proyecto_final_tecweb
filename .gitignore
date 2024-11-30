@@ -1,4 +1,6 @@
 /frontend/node_modules
 /backend/.env
+/backend/main
+/db_backup
 *.log
 
