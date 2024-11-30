@@ -2,19 +2,19 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
-
 	"errors"
+	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 
 	m "github.com/AleBustamante/proyecto_final_tecweb/tree/main/backend/models"
-
 	"github.com/joho/godotenv"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
-func InsertNewUser(user m.User) (m.User, error) {
+func getDBConnection() (*sql.DB, error) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -25,167 +25,179 @@ func InsertNewUser(user m.User) (m.User, error) {
 
 	db, err := sql.Open("libsql", url)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to open db %s: %s", url, err)
-		os.Exit(1)
+		return nil, fmt.Errorf("failed to open db %s: %s", url, err)
+	}
+	return db, nil
+}
+
+func InsertNewUser(user m.User) (m.User, error) {
+	db, err := getDBConnection()
+	if err != nil {
+		return m.User{}, err
 	}
 	defer db.Close()
-	userWithId, err := queryInsertUser(db, user)
 
-	return userWithId, nil
+	query := `INSERT INTO users (username, email, password) VALUES (?, ?, ?)`
+	result, err := db.Exec(query, user.Username, user.Email, user.Password)
+	if err != nil {
+		return m.User{}, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return m.User{}, err
+	}
+	user.ID = int(id)
+	return user, nil
 }
 
 func FindMovieById(id string) (m.Movie, error) {
-	err := godotenv.Load()
+	db, err := getDBConnection()
 	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	db_name := os.Getenv("TURSO_DB_NAME")
-	db_token := os.Getenv("TURSO_AUTH_TOKEN")
-	url := "libsql://" + db_name + ".turso.io?authToken=" + db_token
-
-	db, err := sql.Open("libsql", url)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to open db %s: %s", url, err)
-		os.Exit(1)
+		return m.Movie{}, err
 	}
 	defer db.Close()
-	query := "SELECT * FROM movie WHERE movieId = ?;"
 
-	movie, err := queryById(db, query, id)
-	return movie, err
-}
+	movie := m.Movie{}
+	query := `
+        SELECT m.*, GROUP_CONCAT(g.id) as genre_ids, GROUP_CONCAT(g.name) as genre_names
+        FROM movies m
+        LEFT JOIN movie_genres mg ON m.id = mg.movie_id
+        LEFT JOIN genres g ON mg.genre_id = g.id
+        WHERE m.id = ?
+        GROUP BY m.id`
 
-func FindByTitleOrGenre(title, genre string) ([]m.Movie, error) {
-	err := godotenv.Load()
+	row := db.QueryRow(query, id)
+	var genreIDs, genreNames sql.NullString
+	err = row.Scan(
+		&movie.ID, &movie.ImdbID, &movie.Title, &movie.OriginalTitle,
+		&movie.Overview, &movie.Tagline, &movie.BackdropPath, &movie.PosterPath,
+		&movie.Budget, &movie.Revenue, &movie.Runtime, &movie.ReleaseDate,
+		&movie.OriginalLanguage, &movie.VoteAverage, &movie.VoteCount,
+		&movie.Popularity, &movie.Status, &movie.CollectionID,
+		&genreIDs, &genreNames,
+	)
+	if err == sql.ErrNoRows {
+		return movie, errors.New("movie not found")
+	}
 	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	db_name := os.Getenv("TURSO_DB_NAME")
-	db_token := os.Getenv("TURSO_AUTH_TOKEN")
-	url := "libsql://" + db_name + ".turso.io?authToken=" + db_token
-
-	db, err := sql.Open("libsql", url)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to open db %s: %s", url, err)
-		os.Exit(1)
-	}
-	defer db.Close()
-	movies, err := queryByTitleOrGenre(db, title, genre)
-	return movies, err
-}
-
-func queryInsertUser(db *sql.DB, user m.User) (m.User, error) {
-	query := "INSERT INTO user (username, email, password) VALUES (?, ?, ?)"
-	result, err := db.Exec(query, user.Username, user.Email, user.Password)
-
-	if err != nil {
-		log.Fatalf("Error when iserting the user: %v", err)
+		return movie, err
 	}
 
-	userId, err := result.LastInsertId()
-	if err != nil {
-		log.Fatalf("Error recovering the ID of the inserted user", err)
-	}
-	user.ID = int(userId)
-	return user, err
-}
+	// Initialize empty genres slice
+	movie.Genres = []m.Genre{}
 
-func queryById(db *sql.DB, query, id string) (m.Movie, error) {
-	rows, err := db.Query(query, id)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to execute query: %v", err)
-		os.Exit(1)
-	}
-	defer rows.Close()
-
-	var movie m.Movie
-
-	for rows.Next() {
-
-		if err := rows.Scan(&movie.ID, &movie.Title, &movie.Genres, &movie.ImdbID, &movie.TmdbID); err != nil {
-			fmt.Println("Error scanning row:", err)
-			return movie, errors.New("Error scanning row")
-		}
-	}
-
-	if err := rows.Err(); err != nil {
-		fmt.Println("Error during rows iteration:", err)
+	// Parse genres if they exist
+	if err == nil && (genreIDs.Valid && genreNames.Valid) {
+		movie.Genres = parseGenres(genreIDs, genreNames)
 	}
 	return movie, nil
 }
 
-func queryByTitleOrGenre(db *sql.DB, title, genre string) ([]m.Movie, error) {
-	query := "SELECT * FROM movie WHERE "
-	if title != "" && genre != "" {
-		query += "LOWER(title) LIKE LOWER(?) OR LOWER(genres) LIKE LOWER(?)"
-		rows, err := db.Query(query, "%"+title+"%", "%"+genre+"%")
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "failed to execute query: %v", err)
-			os.Exit(1)
-		}
-		defer rows.Close()
-		var movies []m.Movie
-
-		for rows.Next() {
-			var movie m.Movie
-			if err := rows.Scan(&movie.ID, &movie.Title, &movie.Genres, &movie.ImdbID, &movie.TmdbID); err != nil {
-				fmt.Println("Error scanning row:", err)
-				movies = append(movies, movie)
-				return movies, errors.New("Error scanning row")
-			}
-			movies = append(movies, movie)
-		}
-		if err := rows.Err(); err != nil {
-			fmt.Println("Error during rows iteration:", err)
-		}
-		return movies, err
-
-	} else if title != "" {
-		query += "LOWER(title) LIKE LOWER(?)"
-		rows, err := db.Query(query, "%"+title+"%")
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "failed to execute query: %v", err)
-			os.Exit(1)
-		}
-		defer rows.Close()
-		var movies []m.Movie
-
-		for rows.Next() {
-			var movie m.Movie
-			if err := rows.Scan(&movie.ID, &movie.Title, &movie.Genres, &movie.ImdbID, &movie.TmdbID); err != nil {
-				fmt.Println("Error scanning row:", err)
-				movies = append(movies, movie)
-				return movies, errors.New("Error scanning row")
-			}
-			movies = append(movies, movie)
-		}
-		if err := rows.Err(); err != nil {
-			fmt.Println("Error during rows iteration:", err)
-		}
-		return movies, err
-
-	} else {
-		query += "LOWER(genres) LIKE LOWER(?)"
-		rows, err := db.Query(query, "%"+genre+"%")
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "failed to execute query: %v", err)
-			os.Exit(1)
-		}
-		defer rows.Close()
-		var movies []m.Movie
-
-		for rows.Next() {
-			var movie m.Movie
-			if err := rows.Scan(&movie.ID, &movie.Title, &movie.Genres, &movie.ImdbID, &movie.TmdbID); err != nil {
-				fmt.Println("Error scanning row:", err)
-				movies = append(movies, movie)
-				return movies, errors.New("Error scanning row")
-			}
-			movies = append(movies, movie)
-		}
-		if err := rows.Err(); err != nil {
-			fmt.Println("Error during rows iteration:", err)
-		}
-		return movies, err
+func FindByTitleOrGenre(title, genre string) ([]m.Movie, error) {
+	db, err := getDBConnection()
+	if err != nil {
+		return nil, err
 	}
+	defer db.Close()
+
+	query := `
+        SELECT DISTINCT m.*, GROUP_CONCAT(g.id) as genre_ids, GROUP_CONCAT(g.name) as genre_names
+        FROM movies m
+        LEFT JOIN movie_genres mg ON m.id = mg.movie_id
+        LEFT JOIN genres g ON mg.genre_id = g.id
+        WHERE 1=1`
+	args := []interface{}{}
+
+	if title != "" {
+		query += ` AND LOWER(m.title) LIKE LOWER(?)`
+		args = append(args, "%"+title+"%")
+	}
+	if genre != "" {
+		query += ` AND EXISTS (
+            SELECT 1 FROM movie_genres mg2
+            JOIN genres g2 ON mg2.genre_id = g2.id
+            WHERE mg2.movie_id = m.id AND LOWER(g2.name) LIKE LOWER(?)
+        )`
+		args = append(args, "%"+genre+"%")
+	}
+	query += ` GROUP BY m.id`
+
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var movies []m.Movie
+	for rows.Next() {
+		var movie m.Movie
+		var genreIDs, genreNames sql.NullString
+		err = rows.Scan(
+			&movie.ID, &movie.ImdbID, &movie.Title, &movie.OriginalTitle,
+			&movie.Overview, &movie.Tagline, &movie.BackdropPath, &movie.PosterPath,
+			&movie.Budget, &movie.Revenue, &movie.Runtime, &movie.ReleaseDate,
+			&movie.OriginalLanguage, &movie.VoteAverage, &movie.VoteCount,
+			&movie.Popularity, &movie.Status, &movie.CollectionID,
+			&genreIDs, &genreNames,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Initialize empty genres slice
+		movie.Genres = []m.Genre{}
+
+		// Parse genres if they exist
+		if err == nil && (genreIDs.Valid && genreNames.Valid) {
+			movie.Genres = parseGenres(genreIDs, genreNames)
+		}
+		movies = append(movies, movie)
+	}
+
+	return movies, nil
+}
+
+func AddToWatchlist(userID, movieID int, watched bool) error {
+	db, err := getDBConnection()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	query := `
+        INSERT INTO user_watchlist (user_id, movie_id, watched)
+        VALUES (?, ?, ?)
+        ON CONFLICT(user_id, movie_id) DO UPDATE SET watched = ?`
+
+	_, err = db.Exec(query, userID, movieID, watched, watched)
+	return err
+}
+
+func parseGenres(genreIDs, genreNames sql.NullString) []m.Genre {
+	if !genreIDs.Valid || !genreNames.Valid {
+		return []m.Genre{}
+	}
+
+	ids := strings.Split(genreIDs.String, ",")
+	names := strings.Split(genreNames.String, ",")
+
+	// Asegurarse de que tenemos el mismo número de IDs y nombres
+	if len(ids) != len(names) {
+		return []m.Genre{}
+	}
+
+	genres := make([]m.Genre, len(ids))
+	for i := range ids {
+		id, err := strconv.Atoi(strings.TrimSpace(ids[i]))
+		if err != nil {
+			continue
+		}
+		genres[i] = m.Genre{
+			ID:   id,
+			Name: strings.TrimSpace(names[i]),
+		}
+	}
+
+	return genres
 }
