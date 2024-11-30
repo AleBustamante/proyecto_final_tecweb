@@ -5,7 +5,8 @@ import (
 
 	//"github.com/gin-gonic/gin"
 
-	"github.com/AleBustamante/proyecto_final_tecweb/tree/main/backend/db"
+	api "github.com/AleBustamante/proyecto_final_tecweb/tree/main/backend/routes"
+	//"github.com/AleBustamante/proyecto_final_tecweb/tree/main/backend/db"
 
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
@@ -26,7 +27,9 @@ type Product struct {
 }
 
 func main() {
-	db.ConnectToDb()
+
+	api.ExposeAPI()
+
 	// Creamos un router de Gin
 	//router := gin.Default()
 
