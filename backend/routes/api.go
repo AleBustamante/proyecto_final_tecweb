@@ -78,5 +78,47 @@ func ExposeAPI() {
 		c.JSON(http.StatusOK, gin.H{"message": "Watchlist updated successfully"})
 	})
 
+	router.PATCH("/watchlist", func(c *gin.Context) {
+		userID, err := strconv.Atoi(c.Query("user_id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user_id"})
+			return
+		}
+		movieID, err := strconv.Atoi(c.Query("movie_id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid movie_id"})
+			return
+		}
+		watched, err := strconv.ParseBool(c.Query("watched"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid watched value"})
+			return
+		}
+		err = db.UpdateWatchedStatus(userID, movieID, watched)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Watched status updated successfully"})
+	})
+	router.DELETE("/watchlist", func(c *gin.Context) {
+		userID, err := strconv.Atoi(c.Query("user_id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user_id"})
+			return
+		}
+		movieID, err := strconv.Atoi(c.Query("movie_id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid movie_id"})
+			return
+		}
+		err = db.RemoveFromWatchlist(userID, movieID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Movie removed from watchlist"})
+	})
+
 	router.Run(":8080")
 }

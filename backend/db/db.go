@@ -201,3 +201,44 @@ func parseGenres(genreIDs, genreNames sql.NullString) []m.Genre {
 
 	return genres
 }
+
+func UpdateWatchedStatus(userID, movieID int, watched bool) error {
+	db, err := getDBConnection()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	query := `UPDATE user_watchlist SET watched = ? WHERE user_id = ? AND movie_id = ?`
+	result, err := db.Exec(query, watched, userID, movieID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("no rows updated, check if the user and movie exist in the watchlist")
+	}
+	return nil
+}
+func RemoveFromWatchlist(userID, movieID int) error {
+	db, err := getDBConnection()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	query := `DELETE FROM user_watchlist WHERE user_id = ? AND movie_id = ?`
+	result, err := db.Exec(query, userID, movieID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("no rows deleted, check if the user and movie exist in the watchlist")
+	}
+	return nil
+}
