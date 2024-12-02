@@ -67,6 +67,7 @@ func ExposeAPI() {
 	config.AllowOrigins = []string{
 		"http://localhost:4200",
 		"http://localhost:8080",
+		"https://alebustamante.github.io/proyecto_final_tecweb",
 	} // Agrega aquí tus dominios permitidos
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{
