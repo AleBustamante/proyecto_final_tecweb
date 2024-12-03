@@ -43,7 +43,7 @@ export class MovieListComponent {
         console.error('Error al buscar películas:', error); // Manejar errores
       }
   );
-  } 
+  }
   // Se ejecuta al inicializar el componente
   /*ngOnInit(): void {
     this.obtenerPeliculas();
