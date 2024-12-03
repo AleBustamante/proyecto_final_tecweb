@@ -1,0 +1,39 @@
+<!--<p>Películas works!</p>
+PARA BUSCAR POR ID
+@if(movies){
+  <p>{{movies.title}}</p>
+@for(genero of movies.genres; track genero.name){
+  <div>
+      {{genero.name}}
+  </div>
+}
+}
+<p>Películas works!</p>-->
+<div>
+  <label for="title">Buscar por título:</label>
+  <input type="text" id="title" #titleInput placeholder="Escribe el título de la película"
+  >
+</div>
+
+<button (click)="buscarPeliculasPorTitulo(titleInput.value)">Buscar</button>
+
+@if(movies && movies.length > 0){
+  <h2>Resultados de la búsqueda:</h2>
+@for(movie of movies; track movie.title){
+    <p>{{ movie.title }}</p>
+    <p>{{ movie.overview }}</p>
+    <!--@if(movies.genres && movies.genres > 0){-->
+      <strong>Géneros:</strong>
+      @for(genero of movie.genres; track genero.name){
+        <div>
+            {{genero.name}}
+        </div>
+      }
+    <!--}-->
+  }
+}
+@else{
+  <p>No se encontraron películas</p>
+}
+
+<p>Películas works!</p>
