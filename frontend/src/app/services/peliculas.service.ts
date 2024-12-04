@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,6 @@ export class PeliculasService {
 
   constructor(private http: HttpClient) { }
 
-  /*obtenerPeliculas(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
-  }*/
   obtenerPeliculaPorId(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/movie/${id}`);
     /*return this.http.get(`${this.apiUrl}/search?q=/${id}`);*/
@@ -21,25 +19,19 @@ export class PeliculasService {
   buscarPeliculasPorTitulo(title: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/search?q=${title}`);
   }
+  //agregarPeliculaAWachlist(userId: number, movieId: number, watched: boolean): Observable<any> 
+  agregarPeliculaAWachlist(userId: number, movieId: number, watched: boolean){
+    const params = new HttpParams()
+      .set('user_id', userId.toString())
+      .set('movie_id', movieId.toString())
+      .set('watched', watched.toString());
 
-  /*buscarPeliculas(title: string, genre: string): Observable<any> {
-    let url = `${this.apiUrl}/search?`;
-    if (title) {
-      url += `q=${title}`;
-    }
-    if (genre) {
-      url += (title ? `&` : '') + `genre=${genre}`;
-    }
-    return this.http.get(url);
-  }*/
-  /*buscar por titulo */
-  /*
-  getMovies(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.post(`${this.apiUrl}/watchlist`, {}, { params });
   }
+  
 
   // Eliminar una película por ID
-  deleteMovie(id: number): Observable<void> {
+  /*deleteMovie(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
