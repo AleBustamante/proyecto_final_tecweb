@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpParams } from '@angular/common/http';
+//import { HttpParams } from '@angular/common/http';
+//import { Movie } from '../interfaces/movie.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -19,16 +20,31 @@ export class PeliculasService {
   buscarPeliculasPorTitulo(title: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/search?q=${title}`);
   }
-  //agregarPeliculaAWachlist(userId: number, movieId: number, watched: boolean): Observable<any> 
-  agregarPeliculaAWachlist(userId: number, movieId: number, watched: boolean){
-    const params = new HttpParams()
-      .set('user_id', userId.toString())
-      .set('movie_id', movieId.toString())
-      .set('watched', watched.toString());
+  //agregarPeliculaAWachlist(userId: number, movieId: number, watched: boolean): Observable<any>
+  //agregarPeliculaAWachlist(userId: number, movieId: number, watched: boolean){
+    //const params = new HttpParams()
+      //.set('user_id', userId.toString())
+      //.set('movie_id', movieId.toString())
+      //.set('watched', watched.toString());
 
-    return this.http.post(`${this.apiUrl}/watchlist`, {}, { params });
+    //return this.http.post(`${this.apiUrl}/watchlist`, {}, { params });
+  //}
+  addToWatchlist(userId: number, movieId: number, watched: boolean = false): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post(
+      `${this.apiUrl}/watchlist?user_id=${userId}&movie_id=${movieId}&watched=${watched}`,
+      {},
+      { headers }
+    );
   }
-  
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token'); // Assuming you store the JWT token in localStorage
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
 
   // Eliminar una película por ID
   /*deleteMovie(id: number): Observable<void> {
