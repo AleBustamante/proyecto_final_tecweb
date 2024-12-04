@@ -41,6 +41,17 @@ func loadEnv() {
 }
 
 func ExposeAPI() {
+	// Redirect http traffic to https
+	go func() {
+		log.Println("Starting HTTP to HTTPS redirection server...")
+		if err := http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			target := "https://" + r.Host + r.URL.String()
+			http.Redirect(w, r, target, http.StatusMovedPermanently)
+		})); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("HTTP Redirection server failed: %v\n", err)
+		}
+	}()
+
 	loadEnv()
 	gin.SetMode(gin.ReleaseMode)
 
@@ -67,7 +78,7 @@ func ExposeAPI() {
 	config.AllowOrigins = []string{
 		"http://localhost:4200",
 		"http://localhost:8080",
-		"https://alebustamante.github.io/proyecto_final_tecweb",
+		"https://alebustamante.github.io",
 	} // Agrega aquí tus dominios permitidos
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{
@@ -215,9 +226,11 @@ func ExposeAPI() {
 			c.JSON(http.StatusOK, gin.H{"message": "Movie removed from watchlist"})
 		})
 	}
+	certFile := "/etc/letsencrypt/live/tecweb-project.duckdns.org/fullchain.pem"
+	keyFile := "/etc/letsencrypt/live/tecweb-project.duckdns.org/privkey.pem"
 
 	srv := &http.Server{
-		Addr:         ":8080",
+		Addr:         ":443",
 		Handler:      router,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -226,7 +239,7 @@ func ExposeAPI() {
 
 	// Graceful shutdown
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServeTLS(certFile, keyFile); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Failed to initialize server: %v\n", err)
 		}
 	}()
