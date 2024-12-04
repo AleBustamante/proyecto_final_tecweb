@@ -160,30 +160,31 @@ func ExposeAPI() {
 		c.JSON(http.StatusOK, movies)
 	})
 
+	router.POST("/register", func(c *gin.Context) {
+		var user m.User
+		if err := c.ShouldBindJSON(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		user, err := db.InsertNewUser(user)
+		if err != nil {
+			log.Printf("Error registering user: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"id":       user.ID,
+			"username": user.Username,
+			"email":    user.Email,
+		})
+	})
+
 	// Protected routes group
 	protected := router.Group("/")
 	protected.Use(authMiddleware())
 	{
-		protected.POST("/register", func(c *gin.Context) {
-			var user m.User
-			if err := c.ShouldBindJSON(&user); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-
-			user, err := db.InsertNewUser(user)
-			if err != nil {
-				log.Printf("Error registering user: %v", err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-				return
-			}
-
-			c.JSON(http.StatusOK, gin.H{
-				"id":       user.ID,
-				"username": user.Username,
-				"email":    user.Email,
-			})
-		})
 
 		protected.POST("/watchlist", func(c *gin.Context) {
 			userID, err := strconv.Atoi(c.Query("user_id"))

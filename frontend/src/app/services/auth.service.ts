@@ -73,5 +73,6 @@ export class AuthService {
     localStorage.removeItem('user');
     this.isAuthenticated.set(false);
     this.currentUser.set(null);
+    console.log("Closing session");
   }
 }

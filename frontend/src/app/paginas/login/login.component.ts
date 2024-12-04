@@ -72,7 +72,7 @@ export class LoginComponent {
       const { username, password } = this.loginForm.value;
       this.authService.login(username, password).subscribe({
         next: () => {
-          this.router.navigate(['/movies']);
+          this.router.navigate(['/']);
         },
         error: (err) => {
           this.error = err.error.message || 'Invalid credentials';
