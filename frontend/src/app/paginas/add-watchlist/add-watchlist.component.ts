@@ -14,7 +14,7 @@ export class AddWatchlistComponent {
   //watched: boolean = false; // Estado inicial
 
   constructor(private peliculasService: PeliculasService) {}
-  
+
 
   agregarAWachlist(event: Event,userId: number, movieId: number, watched: string) {
     console.log('Formulario enviado');
@@ -24,7 +24,7 @@ export class AddWatchlistComponent {
       return;
     }
     const watchedBoolean: boolean = watched === 'true';  // Convertimos el string 'true'/'false' a booleano
-    this.peliculasService.agregarPeliculaAWachlist(userId, movieId, watchedBoolean).subscribe(
+    this.peliculasService.addToWatchlist(userId, movieId, watchedBoolean).subscribe(
       (response) => {
         console.log('Película agregada a la lista de seguimiento:', response);
         alert('Película agregada con éxito.');
