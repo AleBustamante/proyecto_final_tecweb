@@ -1,0 +1,45 @@
+.buttons-groups{
+    display: flex;
+    justify-content:center;
+}
+.container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.button-group,
+.user-actions {
+    margin-top: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 1rem;
+    color: #007bff;
+    background-color: white;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.button-group a {
+    margin-left: 10px; /* Espacio entre botones */
+}
+
+.user-actions a {
+    margin-left: 10px;
+}

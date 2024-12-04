@@ -9,31 +9,34 @@ PARA BUSCAR POR ID
 }
 }
 <p>Películas works!</p>-->
-<div>
-  <label for="title">Buscar por título:</label>
-  <input type="text" id="title" #titleInput placeholder="Escribe el título de la película"
-  >
-</div>
+<div class="container">
+  <h1>Buscar Películas</h1>
+  <div class="search-box">
+    <label for="title">Buscar por título:</label>
+    <input type="text" id="title" #titleInput placeholder="Escribe el título de la película" />
+  </div>
+  <button (click)="buscarPeliculasPorTitulo(titleInput.value)">Buscar</button>
 
-<button (click)="buscarPeliculasPorTitulo(titleInput.value)">Buscar</button>
-
-@if(movies && movies.length > 0){
-  <h2>Resultados de la búsqueda:</h2>
-@for(movie of movies; track movie.title){
-    <p>{{ movie.title }}</p>
-    <p>{{ movie.overview }}</p>
-    <!--@if(movies.genres && movies.genres > 0){-->
-      <strong>Géneros:</strong>
-      @for(genero of movie.genres; track genero.name){
-        <div>
-            {{genero.name}}
+  <div class="results">
+    @if (movies && movies.length > 0) {
+      <h2>Resultados de la búsqueda:</h2>
+      @for (movie of movies; track movie.title) {
+        <div class="movie">
+          <p><strong>{{ movie.title }}</strong></p>
+          <p>{{ movie.overview }}</p>
+          <div class="genres">
+            @if (movie.genres && movie.genres.length > 0) {
+              <strong>Géneros:</strong>
+              @for (genero of movie.genres; track genero.name) {
+                <span class="genre">{{ genero.name }}</span>
+              }
+            }
+          </div>
         </div>
       }
-    <!--}-->
-  }
-}
-@else{
-  <p>No se encontraron películas</p>
-}
-
-<p>Películas works!</p>
+    }
+    @else {
+      <p>No se encontraron películas</p>
+    }
+  </div>
+</div>
