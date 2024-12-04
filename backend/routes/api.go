@@ -94,7 +94,39 @@ func ExposeAPI() {
 	config.MaxAge = 12 * time.Hour
 	router.Use(cors.New(config))
 
-	// Original routes with added error logging
+	router.POST("/login", func(c *gin.Context) {
+		var loginData struct {
+			Username string `json:"username"`
+			Password string `json:"password"`
+		}
+
+		if err := c.ShouldBindJSON(&loginData); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid login data"})
+			return
+		}
+
+		user, err := db.ValidateUser(loginData.Username, loginData.Password)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			return
+		}
+
+		token, err := generateToken(user.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"token": token,
+			"user": gin.H{
+				"id":       user.ID,
+				"username": user.Username,
+				"email":    user.Email,
+			},
+		})
+	})
+
 	router.GET("/movie/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		movie, err := db.FindMovieById(id)
