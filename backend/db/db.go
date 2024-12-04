@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/crypto/bcrypt"
+
 	m "github.com/AleBustamante/proyecto_final_tecweb/tree/main/backend/models"
 	"github.com/joho/godotenv"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
@@ -32,13 +34,14 @@ func getDBConnection() (*sql.DB, error) {
 
 func InsertNewUser(user m.User) (m.User, error) {
 	db, err := getDBConnection()
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return m.User{}, err
 	}
-	defer db.Close()
 
 	query := `INSERT INTO users (username, email, password) VALUES (?, ?, ?)`
-	result, err := db.Exec(query, user.Username, user.Email, user.Password)
+	result, err := db.Exec(query, user.Username, user.Email, hashedPassword)
 	if err != nil {
 		return m.User{}, err
 	}
@@ -241,4 +244,31 @@ func RemoveFromWatchlist(userID, movieID int) error {
 		return errors.New("no rows deleted, check if the user and movie exist in the watchlist")
 	}
 	return nil
+}
+
+func ValidateUser(username, password string) (m.User, error) {
+	db, err := getDBConnection()
+	if err != nil {
+		return m.User{}, err
+	}
+	defer db.Close()
+
+	var user m.User
+	query := `SELECT id, username, email, password FROM users WHERE username = ?`
+
+	err = db.QueryRow(query, username).Scan(&user.ID, &user.Username, &user.Email, &user.Password)
+	if err == sql.ErrNoRows {
+		return m.User{}, errors.New("invalid credentials")
+	}
+	if err != nil {
+		return m.User{}, err
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		return m.User{}, errors.New("invalid credentials")
+	}
+	// No devolver la contraseña en la respuesta
+	user.Password = ""
+
+	return user, nil
 }
