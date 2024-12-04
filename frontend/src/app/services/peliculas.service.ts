@@ -6,8 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PeliculasService {
-  private apiUrl = 'http://localhost:8080'; // Cambia esto según la URL de tu backend
-  
+  //private apiUrl = 'http://localhost:8080'; // Cambia esto según la URL de tu backend
+  private apiUrl = 'https://tecweb-project.duckdns.org';
+
   constructor(private http: HttpClient) { }
 
   /*obtenerPeliculas(): Observable<any[]> {
