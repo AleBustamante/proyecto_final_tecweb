@@ -79,7 +79,7 @@ func ExposeAPI() {
 		"http://localhost:4200",
 		"http://localhost:8080",
 		"https://alebustamante.github.io",
-	} // Agrega aquí tus dominios permitidos
+	}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{
 		"Origin",
