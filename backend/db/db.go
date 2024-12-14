@@ -272,3 +272,67 @@ func ValidateUser(username, password string) (m.User, error) {
 
 	return user, nil
 }
+
+func GetUserWatchlist(userID int, watchedFilter *bool) ([]m.WatchlistItem, error) {
+	db, err := getDBConnection()
+	if err != nil {
+		return []m.WatchlistItem{}, err
+	}
+	defer db.Close()
+
+	baseQuery := `
+        SELECT m.id, m.title, m.release_date, w.watched,
+               GROUP_CONCAT(g.id) as genre_ids, 
+               GROUP_CONCAT(g.name) as genre_names
+        FROM user_watchlist w
+        JOIN movies m ON w.movie_id = m.id
+        LEFT JOIN movie_genres mg ON m.id = mg.movie_id
+        LEFT JOIN genres g ON mg.genre_id = g.id
+        WHERE w.user_id = ?`
+
+	args := []interface{}{userID}
+
+	if watchedFilter != nil {
+		baseQuery += " AND w.watched = ?"
+		args = append(args, *watchedFilter)
+	}
+
+	baseQuery += " GROUP BY m.id ORDER BY m.title"
+
+	rows, err := db.Query(baseQuery, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var watchlist []m.WatchlistItem
+	for rows.Next() {
+		var item m.WatchlistItem
+		var genreIDs, genreNames sql.NullString
+
+		err := rows.Scan(
+			&item.MovieID,
+			&item.Title,
+			&item.ReleaseDate,
+			&item.Watched,
+			&genreIDs,
+			&genreNames,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Parse genres if they exist
+		if genreIDs.Valid && genreNames.Valid {
+			item.Genres = parseGenres(genreIDs, genreNames)
+		}
+
+		watchlist = append(watchlist, item)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return watchlist, nil
+}
