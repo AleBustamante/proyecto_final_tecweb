@@ -185,6 +185,34 @@ func ExposeAPI() {
 	protected := router.Group("/")
 	protected.Use(authMiddleware())
 	{
+		protected.GET("/watchlist", func(c *gin.Context) {
+			userID, err := strconv.Atoi(c.Query("user_id"))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user_id"})
+				return
+			}
+
+			// Opcional: filtrar por watched status
+			watchedFilter := c.Query("watched")
+			var watched *bool
+			if watchedFilter != "" {
+				watchedBool, err := strconv.ParseBool(watchedFilter)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid watched filter value"})
+					return
+				}
+				watched = &watchedBool
+			}
+
+			watchlist, err := db.GetUserWatchlist(userID, watched)
+			if err != nil {
+				log.Printf("Error getting watchlist: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+				return
+			}
+
+			c.JSON(http.StatusOK, watchlist)
+		})
 
 		protected.POST("/watchlist", func(c *gin.Context) {
 			userID, err := strconv.Atoi(c.Query("user_id"))

@@ -39,3 +39,11 @@ type UserWatchlist struct {
 	MovieID int  `json:"movie_id"`
 	Watched bool `json:"watched"`
 }
+
+type WatchlistItem struct {
+	MovieID     int     `json:"movie_id"`
+	Title       string  `json:"title"`
+	ReleaseDate string  `json:"release_date"`
+	Genres      []Genre `json:"genres"`
+	Watched     bool    `json:"watched"`
+}
