@@ -20,6 +20,13 @@ export class PeliculasService {
   buscarPeliculasPorTitulo(title: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/search?q=${title}`);
   }
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token'); // Assuming you store the JWT token in localStorage
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
   //agregarPeliculaAWachlist(userId: number, movieId: number, watched: boolean): Observable<any>
   //agregarPeliculaAWachlist(userId: number, movieId: number, watched: boolean){
     //const params = new HttpParams()
@@ -37,27 +44,19 @@ export class PeliculasService {
       { headers }
     );
   }
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token'); // Assuming you store the JWT token in localStorage
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
+
+  getWatchlist(userId: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get<any[]>(`${this.apiUrl}/watchlist?user_id=${userId}`, { headers });
+    //return this.http.get(
+      //`${this.apiUrl}/watchlist?user_id=${userId}`,
+      //{headers}
+    //);
   }
-
-
-  // Eliminar una película por ID
-  /*deleteMovie(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  actualizarWatched(movieId: number, watched: boolean): Observable<any> {
+    const headers = this.getHeaders();
+    const body = { watched };
+    return this.http.patch<any>(`${this.apiUrl}/watchlist/${movieId}`, body, { headers });
   }
-
-  // Agregar una nueva película
-  addMovie(movie: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, movie);
-  }
-
-  // Actualizar una película existente
-  updateMovie(id: number, movie: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, movie);
-  }*/
+  
 }
