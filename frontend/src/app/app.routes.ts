@@ -8,10 +8,10 @@ export const routes: Routes = [
       path: 'buscar-peliculas',
       component: MovieListComponent
     },
-    {
-      path: 'agregar-peliculas',
-      component: AddWatchlistComponent
-    },
+    // {
+    //   path: 'agregar-peliculas',
+    //   component: AddWatchlistComponent
+    // },
       {
     path: 'register',
     loadComponent: () => import('./paginas/register/register.component')
