@@ -59,4 +59,8 @@ export class PeliculasService {
     return this.http.patch<any>(`${this.apiUrl}/watchlist/${movieId}`, body, { headers });
   }
   
+  deleteElementWatchList(userId: number, movieId: number){
+    const headers = this.getHeaders();
+    return this.http.delete(`${this.apiUrl}/watchlist?user_id=${userId}&movie_id=${movieId}`, { headers });
+  }
 }
