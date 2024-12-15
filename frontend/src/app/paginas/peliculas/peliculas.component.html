@@ -3,8 +3,12 @@
   <table>
     <thead>
       <tr>
+        <th>Póster</th>
+        <th>Backdrop</th>
         <th>Título</th>
         <th>Visto</th>
+        <th>Duración</th>
+        <th>Valoración</th>
         <th>Fecha de lanzamiento</th>
         <th>Géneros</th>
         <th>Acciones</th>
@@ -13,6 +17,28 @@
     <tbody>
       @for (movie of watchList; track movie.movie_id) {
         <tr>
+          <td>
+            @if (movie.poster_path) {
+              <img
+                [src]="'https://image.tmdb.org/t/p/w200' + movie.poster_path"
+                [alt]="'Póster de ' + movie.title"
+                style="width: 100px"
+              />
+            } @else {
+              <span>No disponible</span>
+            }
+          </td>
+          <td>
+            @if (movie.backdrop_path) {
+              <img
+                [src]="'https://image.tmdb.org/t/p/w300' + movie.backdrop_path"
+                [alt]="'Backdrop de ' + movie.title"
+                style="width: 200px"
+              />
+            } @else {
+              <span>No disponible</span>
+            }
+          </td>
           <td>{{ movie.title }}</td>
           <td>
             <div class="watched-toggle">
@@ -27,6 +53,8 @@
               </label>
             </div>
           </td>
+          <td>{{ movie.runtime }} min</td>
+          <td>{{ movie.vote_average | number: "1.1-1" }}/10</td>
           <td>{{ movie.release_date }}</td>
           <td>
             @if (movie.genres && movie.genres.length > 0) {

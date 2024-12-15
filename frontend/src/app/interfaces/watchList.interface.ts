@@ -1,17 +1,16 @@
 export interface watchList {
-    movie_id: number;
-    title: string;
-    release_date: string;
-    overview: string;
-    genres: Genre[];
-    watched: boolean;
-    /*"movie_id": 2,
-        "title": "Ariel",
-        "release_date": "1988-10-21",
-        "genres": */
+  movie_id: number;
+  title: string;
+  release_date: string;
+  genres: Genre[];
+  watched: boolean;
+  backdrop_path: string;
+  poster_path: string;
+  runtime: number;
+  vote_average: number;
 }
 
-export interface Genre {
-    id: Number;
-    name: string;
-  }
+interface Genre {
+  id: number;
+  name: string;
+}

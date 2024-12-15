@@ -46,13 +46,6 @@ export class PeliculasService {
       headers,
     });
   }
-  //actualizarWatched(movieId: number, watched: boolean): Observable<any> {
-  //const headers = this.getHeaders();
-  //const body = { watched };
-  //return this.http.patch<any>(`${this.apiUrl}/watchlist/${movieId}`, body, {
-  //headers,
-  //});
-  //}
 
   actualizarWatched(
     userId: number,
