@@ -41,9 +41,13 @@ type UserWatchlist struct {
 }
 
 type WatchlistItem struct {
-	MovieID     int     `json:"movie_id"`
-	Title       string  `json:"title"`
-	ReleaseDate string  `json:"release_date"`
-	Genres      []Genre `json:"genres"`
-	Watched     bool    `json:"watched"`
+	MovieID      int     `json:"movie_id"`
+	Title        string  `json:"title"`
+	ReleaseDate  string  `json:"release_date"`
+	Genres       []Genre `json:"genres"`
+	Watched      bool    `json:"watched"`
+	BackdropPath string  `json:"backdrop_path"`
+	PosterPath   string  `json:"poster_path"`
+	Runtime      int     `json:"runtime"`
+	VoteAverage  float64 `json:"vote_average"`
 }

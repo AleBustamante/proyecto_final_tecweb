@@ -1,44 +1,79 @@
-
-@if(watchList.length > 0 ){
+@if (watchList.length > 0) {
   <h2>Resultados de la búsqueda:</h2>
   <table>
     <thead>
       <tr>
-        <!-- <th>ID</th> -->
+        <th>Póster</th>
+        <th>Backdrop</th>
         <th>Título</th>
         <th>Visto</th>
+        <th>Duración</th>
+        <th>Valoración</th>
         <th>Fecha de lanzamiento</th>
         <th>Géneros</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-      @for(movie of watchList; track movie.movie_id){
+      @for (movie of watchList; track movie.movie_id) {
         <tr>
-          <!-- <td>{{ movie.movie_id }}</td> -->
+          <td>
+            @if (movie.poster_path) {
+              <img
+                [src]="'https://image.tmdb.org/t/p/w200' + movie.poster_path"
+                [alt]="'Póster de ' + movie.title"
+                style="width: 100px"
+              />
+            } @else {
+              <span>No disponible</span>
+            }
+          </td>
+          <td>
+            @if (movie.backdrop_path) {
+              <img
+                [src]="'https://image.tmdb.org/t/p/w300' + movie.backdrop_path"
+                [alt]="'Backdrop de ' + movie.title"
+                style="width: 200px"
+              />
+            } @else {
+              <span>No disponible</span>
+            }
+          </td>
           <td>{{ movie.title }}</td>
-          @if(movie.watched==true ){
-            <td>Visto</td>
-          }
-          @else{
-            <td>No visto</td>
-          }
-          <!--<td>{{ movie.watched }}</td>-->
+          <td>
+            <div class="watched-toggle">
+              <input
+                type="checkbox"
+                [checked]="movie.watched"
+                (change)="actualizarEstadoVisto(movie.movie_id, !movie.watched)"
+                id="watched-{{ movie.movie_id }}"
+              />
+              <label for="watched-{{ movie.movie_id }}">
+                {{ movie.watched ? "Visto" : "No visto" }}
+              </label>
+            </div>
+          </td>
+          <td>{{ movie.runtime }} min</td>
+          <td>{{ movie.vote_average | number: "1.1-1" }}/10</td>
           <td>{{ movie.release_date }}</td>
           <td>
-            @if(movie.genres && movie.genres.length > 0){
-              @for(genero of movie.genres; track genero.id){
-                <ul><li>{{ genero.name }}</li></ul>
+            @if (movie.genres && movie.genres.length > 0) {
+              @for (genero of movie.genres; track genero.id) {
+                <ul>
+                  <li>{{ genero.name }}</li>
+                </ul>
               }
             }
           </td>
-          <td><button (click)="eliminarElementoWatchlist(movie.movie_id)"> Eliminar</button></td>
+          <td>
+            <button (click)="eliminarElementoWatchlist(movie.movie_id)">
+              Eliminar
+            </button>
+          </td>
         </tr>
       }
     </tbody>
   </table>
-}
-@else{
+} @else {
   <h2>No se encontraron películas</h2>
 }
-
-
