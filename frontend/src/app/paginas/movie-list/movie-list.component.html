@@ -1,39 +1,42 @@
-<!--<p>Películas works!</p>
-PARA BUSCAR POR ID
-@if(movies){
-  <p>{{movies.title}}</p>
-@for(genero of movies.genres; track genero.name){
-  <div>
-      {{genero.name}}
-  </div>
-}
-}
-<p>Películas works!</p>-->
 <div>
   <label for="title">Buscar por título:</label>
-  <input type="text" id="title" #titleInput placeholder="Escribe el título de la película"
+  <input
+    type="text"
+    id="title"
+    #titleInput
+    placeholder="Escribe el título de la película"
   >
 </div>
-
 <button (click)="buscarPeliculasPorTitulo(titleInput.value)">Buscar</button>
 
 @if(movies && movies.length > 0){
   <h2>Resultados de la búsqueda:</h2>
-@for(movie of movies; track movie.title){
-    <p>{{ movie.title }}</p>
-    <p>{{ movie.overview }}</p>
-    <!--@if(movies.genres && movies.genres > 0){-->
-      <strong>Géneros:</strong>
-      @for(genero of movie.genres; track genero.name){
-        <div>
-            {{genero.name}}
+  @for(movie of movies; track movie.id){
+    <div class="movie-card">
+      <h3>{{ movie.title }}</h3>
+      <p>{{ movie.overview }}</p>
+      @if(movie.genres && movie.genres.length > 0){
+        <div class="genres">
+          <strong>Géneros:</strong>
+          @for(genero of movie.genres; track genero.name){
+            <span class="genre-tag">{{genero.name}}</span>
+          }
         </div>
       }
-    <!--}-->
+      <button
+        (click)="addToWatchlist(movie.id)"
+        [disabled]="isAddingToWatchlist"
+        class="watchlist-button"
+      >
+        Agregar a Watchlist
+      </button>
+      @if(additionSuccess[movie.id]){
+        <span class="success-message">¡Agregado a la watchlist!</span>
+      }
+    </div>
   }
-}
-@else{
+} @else {
   <p>No se encontraron películas</p>
 }
 
-<p>Películas works!</p>
+
