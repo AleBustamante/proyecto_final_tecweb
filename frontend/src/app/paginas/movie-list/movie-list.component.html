@@ -5,6 +5,7 @@
     id="title"
     #titleInput
     placeholder="Escribe el título de la película"
+    (keydown.enter)="buscarPeliculasPorTitulo(titleInput.value)"
   >
 </div>
 <button (click)="buscarPeliculasPorTitulo(titleInput.value)">Buscar</button>
@@ -14,6 +15,15 @@
   @for(movie of movies; track movie.id){
     <div class="movie-card">
       <h3>{{ movie.title }}</h3>
+      @if (movie.poster_path) {
+        <img
+          [src]="'https://image.tmdb.org/t/p/w200' + movie.poster_path"
+          [alt]="'Póster de ' + movie.title"
+          style="width: 100px"
+        />
+      } @else {
+        <span>No disponible</span>
+      }
       <p>{{ movie.overview }}</p>
       @if(movie.genres && movie.genres.length > 0){
         <div class="genres">
