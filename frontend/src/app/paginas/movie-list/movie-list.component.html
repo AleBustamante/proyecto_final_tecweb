@@ -10,44 +10,47 @@
 </div>
 <button (click)="buscarPeliculasPorTitulo(titleInput.value)">Buscar</button>
 
-@if (movies && movies.length > 0) {
-  <h2>Resultados de la búsqueda:</h2>
-  @for (movie of movies; track movie.id) {
-    <div class="movie-card">
-      <h3>{{ movie.title }}</h3>
-      @if (movie.poster_path) {
-        <img
-          [src]="'https://image.tmdb.org/t/p/w200' + movie.poster_path"
-          [alt]="'Póster de ' + movie.title"
-          style="width: 100px"
-        />
-      } @else {
-        <span>No disponible</span>
-      }
-      <p>{{ movie.overview }}</p>
-      @if (movie.genres && movie.genres.length > 0) {
-        <div class="genres">
-          <strong>Géneros:</strong>
-          @for (genero of movie.genres; track genero.name) {
-            <span class="genre-tag">{{ genero.name }}</span>
-          }
-        </div>
-      }
-
-      <ng-container *ngIf="authService.isAuthenticated()">
-        <button
-          (click)="addToWatchlist(movie.id)"
-          [disabled]="isAddingToWatchlist"
-          class="watchlist-button"
-        >
-          Agregar a Watchlist
-        </button>
-      </ng-container>
-      @if (additionSuccess[movie.id]) {
-        <span class="success-message">¡Agregado a la watchlist!</span>
-      }
-    </div>
+@if (isSearching) {
+  <p>Buscando películas...</p>
+} @else if (hasSearched) {
+  @if (movies && movies.length > 0) {
+    <h2>Resultados de la búsqueda:</h2>
+    @for (movie of movies; track movie.id) {
+      <div class="movie-card">
+        <h3>{{ movie.title }}</h3>
+        @if (movie.poster_path) {
+          <img
+            [src]="'https://image.tmdb.org/t/p/w200' + movie.poster_path"
+            [alt]="'Póster de ' + movie.title"
+            style="width: 100px"
+          />
+        } @else {
+          <span>No disponible</span>
+        }
+        <p>{{ movie.overview }}</p>
+        @if (movie.genres && movie.genres.length > 0) {
+          <div class="genres">
+            <strong>Géneros:</strong>
+            @for (genero of movie.genres; track genero.name) {
+              <span class="genre-tag">{{ genero.name }}</span>
+            }
+          </div>
+        }
+        <ng-container *ngIf="authService.isAuthenticated()">
+          <button
+            (click)="addToWatchlist(movie.id)"
+            [disabled]="isAddingToWatchlist"
+            class="watchlist-button"
+          >
+            Agregar a Watchlist
+          </button>
+        </ng-container>
+        @if (additionSuccess[movie.id]) {
+          <span class="success-message">¡Agregado a la watchlist!</span>
+        }
+      </div>
+    }
+  } @else {
+    <p>No se encontraron películas</p>
   }
-} @else {
-  <p>No se encontraron películas</p>
 }

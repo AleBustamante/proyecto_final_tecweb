@@ -15,6 +15,8 @@ export class MovieListComponent {
   movies: Movie[] = [];
   isAddingToWatchlist = false;
   additionSuccess: { [key: number]: boolean } = {};
+  isSearching = false;
+  hasSearched = false;
 
   constructor(
     private peliculasService: PeliculasService,
@@ -66,14 +68,21 @@ export class MovieListComponent {
       return;
     }
 
-    this.peliculasService.buscarPeliculasPorTitulo(title).subscribe(
-      (data: any) => {
+    this.isSearching = true;
+    this.hasSearched = true;
+
+    this.peliculasService.buscarPeliculasPorTitulo(title).subscribe({
+      next: (data: any) => {
         this.movies = data;
         console.log("Películas encontradas:", this.movies);
       },
-      (error: any) => {
-        console.error("Error al buscar películas:", error); // Manejar errores
+      error: (error: any) => {
+        console.error("Error al buscar películas:", error);
+        this.movies = [];
       },
-    );
+      complete: () => {
+        this.isSearching = false;
+      },
+    });
   }
 }
