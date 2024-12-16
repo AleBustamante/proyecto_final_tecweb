@@ -1,10 +1,11 @@
-import { Component} from '@angular/core';
-import { PeliculasService } from '../../services/peliculas.service';
-import { JsonPipe, NgFor, NgIf } from '@angular/common';
-import { Movie } from '../../interfaces/movie.interface';
+import { Component } from "@angular/core";
+import { PeliculasService } from "../../services/peliculas.service";
+import { JsonPipe, NgFor, NgIf } from "@angular/common";
+import { Movie } from "../../interfaces/movie.interface";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
-  selector: 'app-movie-list',
+  selector: "app-movie-list",
   standalone: true,
   imports: [JsonPipe, NgIf, NgFor],
   templateUrl: "./movie-list.component.html",
@@ -15,7 +16,10 @@ export class MovieListComponent {
   isAddingToWatchlist = false;
   additionSuccess: { [key: number]: boolean } = {};
 
-  constructor(private peliculasService: PeliculasService) {}
+  constructor(
+    private peliculasService: PeliculasService,
+    public authService: AuthService,
+  ) {}
 
   addToWatchlist(movieId: number) {
     this.isAddingToWatchlist = true;
@@ -29,17 +33,17 @@ export class MovieListComponent {
         }, 3000); // Hide success message after 3 seconds
       },
       error: (error) => {
-        console.error('Error adding to watchlist:', error);
+        console.error("Error adding to watchlist:", error);
         // Handle error (show error message to user)
       },
       complete: () => {
         this.isAddingToWatchlist = false;
-      }
+      },
     });
   }
 
   private getCurrentUserId(): number {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
     return user.id;
   }
 
@@ -48,29 +52,28 @@ export class MovieListComponent {
     this.peliculasService.obtenerPeliculaPorId(movieId).subscribe(
       (data: any) => {
         this.movies = data;
-        console.log('Películas obtenidas:', this.movies);
+        console.log("Películas obtenidas:", this.movies);
       },
       (error: any) => {
-        console.error('Error al obtener películas:', error); // Manejar errores
-      }
+        console.error("Error al obtener películas:", error); // Manejar errores
+      },
     );
   }
 
   buscarPeliculasPorTitulo(title: string) {
     if (!title) {
-      console.error('El título de la película no puede estar vacío');
+      console.error("El título de la película no puede estar vacío");
       return;
     }
 
     this.peliculasService.buscarPeliculasPorTitulo(title).subscribe(
       (data: any) => {
         this.movies = data;
-        console.log('Películas encontradas:', this.movies);
+        console.log("Películas encontradas:", this.movies);
       },
       (error: any) => {
-        console.error('Error al buscar películas:', error); // Manejar errores
-      }
-  );
+        console.error("Error al buscar películas:", error); // Manejar errores
+      },
+    );
   }
-  
 }

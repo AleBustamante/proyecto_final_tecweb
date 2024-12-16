@@ -1,1 +1,44 @@
-<p>login works!</p>
+<div class="container mx-auto mt-8 max-w-md">
+  <h2 class="text-2xl font-bold mb-4">Login</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium mb-1">Username</label>
+      <input
+        type="text"
+        formControlName="username"
+        class="w-full p-2 border rounded"
+        [class.border-red-500]="
+          loginForm.get('username')?.touched &&
+          loginForm.get('username')?.invalid
+        "
+      />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Password</label>
+      <input
+        type="password"
+        formControlName="password"
+        class="w-full p-2 border rounded"
+        [class.border-red-500]="
+          loginForm.get('password')?.touched &&
+          loginForm.get('password')?.invalid
+        "
+      />
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="loginForm.invalid"
+      class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+    >
+      Login
+    </button>
+
+    @if (error) {
+      <div class="text-red-500 text-sm mt-2">
+        {{ error }}
+      </div>
+    }
+  </form>
+</div>

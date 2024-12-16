@@ -1,11 +1,27 @@
-<nav class="bg-gray-800 p-4 text-white">
-  <div class="container mx-auto flex justify-between items-center">
-    <a class="text-xl font-bold" routerLink="/">Filmoteca</a>
-    <div>
+<nav class="header-nav">
+  <div class="nav-container">
+    <div class="nav-left">
+      <a class="brand-logo" routerLink="/">Filmoteca</a>
+      <a class="nav-link" routerLink="/buscar-peliculas"> Buscar Películas </a>
+      <a
+        *ngIf="authService.isAuthenticated()"
+        routerLink="/watchList"
+        class="nav-link"
+      >
+        Lista de películas
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <ng-container *ngIf="!authService.isAuthenticated()">
+        <a routerLink="/register" class="nav-link"> Registrarse </a>
+        <a routerLink="/login" class="nav-link"> Login </a>
+      </ng-container>
+
       <button
-        *ngIf="isAuthenticated()"
+        *ngIf="authService.isAuthenticated()"
         (click)="logout()"
-        class="text-sm underline"
+        class="nav-link logout-btn"
       >
         Logout
       </button>
