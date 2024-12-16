@@ -18,6 +18,14 @@
         <a routerLink="/login" class="nav-link"> Login </a>
       </ng-container>
 
+      <a
+        *ngIf="authService.isAuthenticated()"
+        routerLink="/profile"
+        class="nav-link"
+      >
+        Perfil
+      </a>
+
       <button
         *ngIf="authService.isAuthenticated()"
         (click)="logout()"

@@ -335,3 +335,111 @@ func GetUserWatchlist(userID int, watchedFilter *bool) ([]m.WatchlistItem, error
 	}
 	return watchlist, nil
 }
+
+func GetUserByID(userID int) (m.User, error) {
+	db, err := getDBConnection()
+	if err != nil {
+		return m.User{}, err
+	}
+	defer db.Close()
+
+	var user m.User
+	query := `SELECT id, username, email FROM users WHERE id = ?`
+	err = db.QueryRow(query, userID).Scan(&user.ID, &user.Username, &user.Email)
+	if err == sql.ErrNoRows {
+		return m.User{}, errors.New("user not found")
+	}
+	if err != nil {
+		return m.User{}, err
+	}
+
+	return user, nil
+}
+
+func UpdateUser(userID int, username, email, password string) error {
+	db, err := getDBConnection()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Construir la consulta dinámicamente basada en los campos proporcionados
+	updates := []string{}
+	args := []interface{}{}
+
+	if username != "" {
+		updates = append(updates, "username = ?")
+		args = append(args, username)
+	}
+	if email != "" {
+		updates = append(updates, "email = ?")
+		args = append(args, email)
+	}
+	if password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+		updates = append(updates, "password = ?")
+		args = append(args, hashedPassword)
+	}
+
+	if len(updates) == 0 {
+		return errors.New("no fields to update")
+	}
+
+	query := fmt.Sprintf("UPDATE users SET %s WHERE id = ?", strings.Join(updates, ", "))
+	args = append(args, userID)
+
+	result, err := db.Exec(query, args...)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("user not found")
+	}
+
+	return nil
+}
+
+func DeleteUser(userID int) error {
+	db, err := getDBConnection()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM user_watchlist WHERE user_id = ?", userID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	result, err := tx.Exec("DELETE FROM users WHERE id = ?", userID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	if rowsAffected == 0 {
+		tx.Rollback()
+		return errors.New("user not found")
+	}
+
+	return tx.Commit()
+}
