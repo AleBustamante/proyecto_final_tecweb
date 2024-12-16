@@ -1,0 +1,127 @@
+:host {
+  font-family: "Poppins", Arial, sans-serif;
+  background-color: rgb(19, 7, 40);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.profile-container {
+  width: 100%;
+  max-width: 600px;
+  background-color: #2a1e4d;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.profile-container h2,
+.profile-container h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #f5ea14;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+form {
+  margin-bottom: 2rem;
+}
+
+form div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+label {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #d1d1d1;
+}
+
+input {
+  padding: 0.8rem;
+  background-color: #3b306a;
+  color: #f0f0f0;
+  border: 1px solid #555;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+input:focus {
+  border-color: #7d3cff;
+  box-shadow: 0 0 5px #7d3cff;
+  outline: none;
+}
+
+button {
+  padding: 0.8rem 1.5rem;
+  background-color: #7d3cff;
+  color: #f0f0f0;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #9e67ff;
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  background-color: #555;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.success {
+  background-color: #28a745;
+  color: #fff;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.error {
+  background-color: #dc3545;
+  color: #fff;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1.5rem;
+  }
+
+  input {
+    font-size: 0.9rem;
+    padding: 0.7rem;
+  }
+
+  button {
+    font-size: 0.9rem;
+    padding: 0.7rem 1rem;
+  }
+
+  h2,
+  h3 {
+    font-size: 1.5rem;
+  }
+}
