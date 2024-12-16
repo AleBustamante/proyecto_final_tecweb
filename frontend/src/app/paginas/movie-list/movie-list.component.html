@@ -5,6 +5,7 @@
     id="title"
     #titleInput
     placeholder="Escribe el título de la película"
+    (keydown.enter)="buscarPeliculasPorTitulo(titleInput.value)"
   >
 </div>
 <button (click)="buscarPeliculasPorTitulo(titleInput.value)">Buscar</button>
