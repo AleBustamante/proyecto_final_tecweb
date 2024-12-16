@@ -286,6 +286,89 @@ func ExposeAPI() {
 
 			c.JSON(http.StatusOK, gin.H{"message": "Movie removed from watchlist"})
 		})
+		protected.GET("/user/:id", func(c *gin.Context) {
+			requestedUserID, err := strconv.Atoi(c.Param("id"))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+				return
+			}
+
+			// Verificar que el usuario autenticado solo pueda ver su propia información
+			authenticatedUserID := c.GetInt("user_id")
+			if requestedUserID != authenticatedUserID {
+				c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+				return
+			}
+
+			user, err := db.GetUserByID(requestedUserID)
+			if err != nil {
+				log.Printf("Error getting user: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+				return
+			}
+
+			c.JSON(http.StatusOK, gin.H{
+				"id":       user.ID,
+				"username": user.Username,
+				"email":    user.Email,
+			})
+		})
+
+		protected.PATCH("/user/:id", func(c *gin.Context) {
+			requestedUserID, err := strconv.Atoi(c.Param("id"))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+				return
+			}
+
+			// Verificar que el usuario autenticado solo pueda modificar su propia información
+			authenticatedUserID := c.GetInt("user_id")
+			if requestedUserID != authenticatedUserID {
+				c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+				return
+			}
+
+			var updateData struct {
+				Username string `json:"username"`
+				Email    string `json:"email"`
+				Password string `json:"password"`
+			}
+
+			if err := c.ShouldBindJSON(&updateData); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid update data"})
+				return
+			}
+
+			if err := db.UpdateUser(requestedUserID, updateData.Username, updateData.Email, updateData.Password); err != nil {
+				log.Printf("Error updating user: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+				return
+			}
+
+			c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+		})
+
+		protected.DELETE("/user/:id", func(c *gin.Context) {
+			requestedUserID, err := strconv.Atoi(c.Param("id"))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+				return
+			}
+
+			authenticatedUserID := c.GetInt("user_id")
+			if requestedUserID != authenticatedUserID {
+				c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+				return
+			}
+
+			if err := db.DeleteUser(requestedUserID); err != nil {
+				log.Printf("Error deleting user: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+				return
+			}
+
+			c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
+		})
 	}
 	certFile := "/etc/letsencrypt/live/tecweb-project.duckdns.org/fullchain.pem"
 	keyFile := "/etc/letsencrypt/live/tecweb-project.duckdns.org/privkey.pem"
