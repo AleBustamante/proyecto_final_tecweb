@@ -1,35 +1,35 @@
-import { Routes } from '@angular/router';
-import { MovieListComponent } from './paginas/movie-list/movie-list.component';
-// import { AddWatchlistComponent } from './paginas/add-watchlist/add-watchlist.component';
-import { PeliculasComponent } from './paginas/peliculas/peliculas.component';
+import { Routes } from "@angular/router";
+import { MovieListComponent } from "./paginas/movie-list/movie-list.component";
+import { PeliculasComponent } from "./paginas/peliculas/peliculas.component";
+import { ProfileComponent } from "./paginas/profile/profile.component";
 
 export const routes: Routes = [
-    {
-      path: 'buscar-peliculas',
-      component: MovieListComponent
-    },
-    // {
-    //   path: 'agregar-peliculas',
-    //   component: AddWatchlistComponent
-    // },
-      {
-    path: 'register',
-    loadComponent: () => import('./paginas/register/register.component')
-      .then(m => m.RegisterComponent)
+  {
+    path: "buscar-peliculas",
+    component: MovieListComponent,
   },
   {
-    path: 'login',
-    loadComponent: () => import('./paginas/login/login.component')
-      .then(m => m.LoginComponent)
+    path: "register",
+    loadComponent: () =>
+      import("./paginas/register/register.component").then(
+        (m) => m.RegisterComponent,
+      ),
   },
   {
-    path: '*',
-    redirectTo: 'login'
+    path: "login",
+    loadComponent: () =>
+      import("./paginas/login/login.component").then((m) => m.LoginComponent),
   },
   {
-    path: 'watchList',
-    component: PeliculasComponent
-  }
+    path: "*",
+    redirectTo: "login",
+  },
+  {
+    path: "watchList",
+    component: PeliculasComponent,
+  },
+  {
+    path: "profile",
+    component: ProfileComponent,
+  },
 ];
-
-
