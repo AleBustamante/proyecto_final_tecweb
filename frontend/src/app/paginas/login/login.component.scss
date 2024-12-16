@@ -1,75 +1,125 @@
-/* Estilo para el contenedor principal */
 .container {
   max-width: 500px;
   margin: 0 auto;
-  padding: 20px;
-  background-color: rgb(19, 7, 40); /* Fondo oscuro del contenedor */
-  border-radius: 10px;
-  align-items: center;
+  padding: 25px;
+  background-color: rgb(19, 7, 40);
+  border-radius: 12px;
 }
 
-/* Estilo para los encabezados */
 h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 2rem;
+  font-weight: 700;
   color: white;
   text-align: center;
+  margin-bottom: 1.5rem;
+  font-family: "Arial", sans-serif;
 }
 
-/* Estilo para las etiquetas de los campos */
 label {
-  display: block;
-  font-size: 0.875rem;
-  color: white;
-  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  margin-bottom: 0.75rem;
 }
 
-/* Estilo para los campos de entrada (input) */
 input {
-  width: 100%; /* Ajustado para ocupar todo el ancho */
+  width: 100%;
   padding: 0.8rem;
   margin-bottom: 1.5rem;
-  background-color: #2a1e4d; /* Fondo oscuro para los inputs */
-  color: white; /* Texto blanco */
-  border: 1px solid #555; /* Borde más sutil */
-  border-radius: 4px;
+  background-color: #2a1e4d;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 6px;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  font-family: "Arial", sans-serif;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Estilo cuando un campo tiene error */
 input:invalid {
-  border-color: #e74c3c; /* Rojo para indicar error */
+  border-color: #e74c3c;
 }
 
-/* Estilo para los campos de entrada cuando están enfocados */
 input:focus {
-  border-color: #7d3cff; /* Borde púrpura brillante al enfocar */
+  border-color: #7d3cff;
+  box-shadow: 0px 0px 5px #7d3cff;
   outline: none;
 }
 
-/* Estilo para el botón de envío */
 button {
   width: 100%;
-  padding: 0.8rem;
-  background-color: #3a096f; /* Botón con color púrpura oscuro */
+  padding: 0.9rem;
+  background-color: #3a096f;
   color: white;
+  font-weight: 600;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 1rem;
-  margin-left: 10px;
+  font-family: "Arial", sans-serif;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  margin-left: 10px;
 }
 
-/* Efecto hover en el botón */
 button:hover {
-  background-color: #491085; /* Púrpura más claro al pasar el mouse */
+  background-color: #491085;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Estilo para el mensaje de error */
 .text-red-500 {
   color: #e74c3c;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   margin-top: 1rem;
+  font-family: "Arial", sans-serif;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  label {
+    font-size: 0.9rem;
+  }
+
+  input {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  button {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+    margin: 5px;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  input {
+    padding: 0.5rem;
+  }
+
+  button {
+    padding: 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .text-red-500 {
+    font-size: 0.8rem;
+  }
 }

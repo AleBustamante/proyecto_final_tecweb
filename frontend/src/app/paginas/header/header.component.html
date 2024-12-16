@@ -16,7 +16,7 @@
     <div class="nav-right">
       <ng-container *ngIf="!authService.isAuthenticated()">
         <a routerLink="/register" class="nav-link"> Registrarse </a>
-        <a routerLink="/login" class="nav-link"> Login </a>
+        <a routerLink="/login" class="nav-link"> Iniciar Sesion </a>
       </ng-container>
 
       <a
@@ -32,7 +32,7 @@
         (click)="logout()"
         class="text-sm underline"
       >
-        Logout
+      Cerrar sesión
       </button>
     </div>
   </div>
