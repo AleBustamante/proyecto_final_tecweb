@@ -1,12 +1,16 @@
 <div>
   <h1>Gestión de Películas</h1>
   <app-header></app-header>
-  <a routerLink="/buscar-peliculas">Buscar Películas</a>
-  <!-- <a routerLink="/agregar-peliculas" style="margin-left: 20px;">Agregar Película</a> -->
-
-  <a routerLink="/register" style="margin-left: 20px;">Registrarse</a>
-  <a routerLink="/login" style="margin-left: 20px;">Login</a>
-  <a routerLink="/watchList" style="margin-left: 20px;">Lista de peliculas</a>
-
+  <div class="nav-container">
+      <!-- <a routerLink="/agregar-peliculas" style="margin-left: 20px;">Agregar Película</a> -->
+    <div class="nav-left">
+      <button class="nav-button watchList" routerLink="/watchList">Lista de películas</button>
+      <button class="nav-button buscar-peliculas" routerLink="/buscar-peliculas">Buscar Películas</button>
+    </div>
+    <div class="nav-right">
+      <button class="nav-button register" routerLink="/register">Registrarse</button>
+      <button class="nav-button login" routerLink="/login">Login</button>
+    </div>
+  </div>
   <router-outlet></router-outlet>
 </div>

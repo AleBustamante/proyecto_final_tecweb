@@ -10,7 +10,7 @@ import { NgIf } from '@angular/common';
   imports: [ReactiveFormsModule, NgIf],
   template: `
     <div class="container mx-auto mt-8 max-w-md">
-      <h2 class="text-2xl font-bold mb-4">Login</h2>
+      <h2 class="text-2xl font-bold mb-4">Iniciar Sesion</h2>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">Username</label>
@@ -50,7 +50,8 @@ import { NgIf } from '@angular/common';
         }
       </form>
     </div>
-  `
+  `,
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   loginForm: FormGroup;

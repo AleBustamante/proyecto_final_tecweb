@@ -1,0 +1,100 @@
+:host {
+    display: block;
+    margin: 0;
+    background-color: rgb(19, 7, 40);
+  }
+  
+  h1 {
+    text-align: center;
+    font-size: 40px;
+    color:aliceblue;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 0 20px;
+  }
+  
+  .nav-left {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-right {
+    display: flex;
+    gap: 20px;
+    margin-left: 40px;
+  }
+  
+  .nav-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+  }
+  
+  .nav-button.watchList {
+    background-color: #3a096f;
+    color: white;
+  }
+  
+  .nav-button.watchList:hover {
+    background-color: #491085;
+  }
+  
+  .nav-button.buscar-peliculas {
+    background-color: #3a096f;
+    color: white;
+  }
+  
+  .nav-button.buscar-peliculas:hover {
+    background-color: #491085;
+  }
+  
+  .nav-button.register {
+    background-color: #3a096f;
+    color: white;
+  }
+
+  .nav-button.register {
+    background-color: #491085;
+  }
+  
+  .nav-button.login {
+    background-color: transparent;
+    color: white;
+  }
+  
+  /* Estilo para el app-header */
+  app-header {
+    display: block;
+    height: 50px;
+    margin-bottom: 30px;
+  }
+  
+  /* Contenido de router-outlet */
+  router-outlet {
+    display: block;
+    margin-top: 20px;
+    background-color: #08020b;
+    padding: 10px;
+    border-radius: 5px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 18px;
+    color: black;
+  }
+  
+  div {
+    text-align: center;
+  }
+  
