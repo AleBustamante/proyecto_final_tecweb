@@ -1,4 +1,4 @@
-a{
+/*a{
     font-family:Georgia, 'Times New Roman', Times, serif;
     color: white;
     text-decoration: none;
@@ -28,4 +28,72 @@ a{
 
 .nav-link:hover {
   color: #d1d5db;
+}*/
+/* Estilo general del navbar */
+nav {
+  background-color: transparent;
+  color: #fff;
+  padding: 3rem; 
+  font-family: Arial, sans-serif;
+  padding-top: 30px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-left a {
+  text-decoration: none;
+  color: #f5ea14;
+  margin-right: 20px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-left a:hover {
+  color: #d2d26e;
+}
+
+.nav-right a {
+  text-decoration: none;
+  color: #e4dbec;
+  margin-left: 15px;
+  font-size: 0.9rem;
+  padding: 5px 10px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  transition: all 0.3s ease-in-out;
+}
+
+
+button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 15px;
+}
+
+button:hover {
+  color: #8d00d4;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .nav-left, .nav-right {
+    margin-bottom: 10px;
+  }
+
+  .nav-left a, .nav-right a {
+    margin: 5px 0;
+  }
 }
