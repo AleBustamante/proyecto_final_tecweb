@@ -1,15 +1,8 @@
-.header-nav {
-  background-color: #1f2937;
-  padding: 1rem;
-  color: white;
-}
-
-.nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+a{
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
 }
 
 .nav-left,
@@ -34,17 +27,5 @@
 }
 
 .nav-link:hover {
-  color: #d1d5db;
-}
-
-.logout-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  padding: 0.5rem;
-}
-
-.logout-btn:hover {
   color: #d1d5db;
 }

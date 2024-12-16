@@ -1,0 +1,77 @@
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: rgb(19, 7, 40);
+    border-radius: 0;
+  }
+  
+  h2 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    font-size: 1rem;
+    color: #d1d1d1; 
+    margin-bottom: 0.5rem;
+  }
+  
+  input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1.5rem;
+    background-color: #2a1e4d; 
+    color: white; 
+    border: 1px solid #555; 
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+  
+  input:focus {
+    border-color: #7d3cff;
+    outline: none;
+  }
+  
+  input.border-red-500 {
+    border-color: #e74c3c;
+  }
+  
+  button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #3a096f;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    margin-left: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #491085; 
+  }
+  
+  button:disabled {
+    background-color: #5a3d72;
+    cursor: not-allowed;
+  }
+  
+  .text-red-500 {
+    color: #e74c3c;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+  
+  /* Espaciado entre los elementos del formulario */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
